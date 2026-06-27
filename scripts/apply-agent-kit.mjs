@@ -16,7 +16,10 @@ const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
 
 const entries = [
   { source: "AGENTS.md", target: "AGENTS.md", type: "file" },
-  { source: ".agents/skills", target: ".agents/skills", type: "skills" },
+  { source: "CLAUDE.md", target: "CLAUDE.md", type: "file" },
+  { source: ".claude/settings.json", target: ".claude/settings.json", type: "file" },
+  { source: ".agents/skills", target: ".agents/skills", type: "directory" },
+  { source: ".agents/skills", target: ".claude/skills", type: "directory" },
 ];
 
 const copied = [];

@@ -1,8 +1,8 @@
 .DS_Store
 node_modules/
 .expo/
+.claude/settings.local.json
 dist/
 coverage/
 *.log
 *.bak-*
-

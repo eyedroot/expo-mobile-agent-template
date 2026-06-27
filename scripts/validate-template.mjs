@@ -10,7 +10,9 @@ const repoRoot = resolve(dirname(scriptPath), "..");
 const requiredFiles = [
   "README.md",
   "AGENTS.md",
+  "CLAUDE.md",
   "package.json",
+  ".claude/settings.json",
   "scripts/apply-agent-kit.mjs",
   "scripts/validate-template.mjs",
   "templates/PROJECT_PROFILE.md",
@@ -35,19 +37,23 @@ for (const file of requiredFiles) {
   }
 }
 
-const collectMarkdownFiles = (dir) => {
+const collectTextFiles = (dir) => {
   const output = [];
 
   for (const entry of readdirSync(dir)) {
+    if (entry === ".git" || entry === "node_modules") {
+      continue;
+    }
+
     const fullPath = join(dir, entry);
     const stats = statSync(fullPath);
 
     if (stats.isDirectory()) {
-      output.push(...collectMarkdownFiles(fullPath));
+      output.push(...collectTextFiles(fullPath));
       continue;
     }
 
-    if (entry.endsWith(".md")) {
+    if (/\.(md|json|mjs)$/.test(entry)) {
       output.push(fullPath);
     }
   }
@@ -55,7 +61,7 @@ const collectMarkdownFiles = (dir) => {
   return output;
 };
 
-for (const filePath of collectMarkdownFiles(repoRoot)) {
+for (const filePath of collectTextFiles(repoRoot)) {
   const text = readFileSync(filePath, "utf8");
 
   for (const { name, pattern } of forbiddenPatterns) {
