@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import { existsSync, readFileSync, readdirSync, statSync } from "node:fs";
+import { existsSync, lstatSync, readFileSync, readdirSync, statSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -22,6 +22,10 @@ const requiredFiles = [
   ".agents/skills/zustand-patterns/SKILL.md",
 ];
 
+const requiredSymlinks = [
+  ".claude/skills",
+];
+
 const forbiddenPatterns = [
   { name: "absolute local project path", pattern: /\/Users\/[^/\s]+\/Github\/[A-Za-z0-9._-]+/ },
   { name: "GitHub token", pattern: /gh[oprsu]_[A-Za-z0-9_]+/ },
@@ -37,6 +41,18 @@ for (const file of requiredFiles) {
   }
 }
 
+for (const symlinkPath of requiredSymlinks) {
+  const fullPath = join(repoRoot, symlinkPath);
+
+  try {
+    if (!lstatSync(fullPath).isSymbolicLink()) {
+      errors.push(`required path is not a symlink: ${symlinkPath}`);
+    }
+  } catch {
+    errors.push(`missing required symlink: ${symlinkPath}`);
+  }
+}
+
 const collectTextFiles = (dir) => {
   const output = [];
 
@@ -46,6 +62,12 @@ const collectTextFiles = (dir) => {
     }
 
     const fullPath = join(dir, entry);
+    const linkStats = lstatSync(fullPath);
+
+    if (linkStats.isSymbolicLink()) {
+      continue;
+    }
+
     const stats = statSync(fullPath);
 
     if (stats.isDirectory()) {

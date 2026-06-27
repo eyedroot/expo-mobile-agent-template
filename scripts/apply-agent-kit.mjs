@@ -1,6 +1,14 @@
 #!/usr/bin/env node
 
-import { cpSync, existsSync, mkdirSync, readdirSync, statSync, copyFileSync } from "node:fs";
+import {
+  copyFileSync,
+  lstatSync,
+  mkdirSync,
+  readdirSync,
+  renameSync,
+  statSync,
+  symlinkSync,
+} from "node:fs";
 import { dirname, join, relative, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -19,12 +27,23 @@ const entries = [
   { source: "CLAUDE.md", target: "CLAUDE.md", type: "file" },
   { source: ".claude/settings.json", target: ".claude/settings.json", type: "file" },
   { source: ".agents/skills", target: ".agents/skills", type: "directory" },
-  { source: ".agents/skills", target: ".claude/skills", type: "directory" },
+  { target: ".claude/skills", type: "symlink", linkTarget: "../.agents/skills" },
 ];
 
 const copied = [];
+const linked = [];
 const skipped = [];
 const backedUp = [];
+
+const pathExists = (targetPath) => {
+  try {
+    lstatSync(targetPath);
+
+    return true;
+  } catch {
+    return false;
+  }
+};
 
 const ensureParent = (filePath) => {
   mkdirSync(dirname(filePath), { recursive: true });
@@ -32,23 +51,27 @@ const ensureParent = (filePath) => {
 
 const backupPathFor = (targetPath) => `${targetPath}.bak-${timestamp}`;
 
+const backupExisting = (targetPath) => {
+  const backupPath = backupPathFor(targetPath);
+
+  if (!dryRun) {
+    renameSync(targetPath, backupPath);
+  }
+
+  backedUp.push(relative(targetRoot, backupPath));
+};
+
 const copyFileWithPolicy = (sourcePath, targetPath) => {
   const relTarget = relative(targetRoot, targetPath);
 
-  if (existsSync(targetPath)) {
+  if (pathExists(targetPath)) {
     if (!force) {
       skipped.push(relTarget);
 
       return;
     }
 
-    const backupPath = backupPathFor(targetPath);
-
-    if (!dryRun) {
-      copyFileSync(targetPath, backupPath);
-    }
-
-    backedUp.push(relative(targetRoot, backupPath));
+    backupExisting(targetPath);
   }
 
   if (!dryRun) {
@@ -57,6 +80,27 @@ const copyFileWithPolicy = (sourcePath, targetPath) => {
   }
 
   copied.push(relTarget);
+};
+
+const createSymlinkWithPolicy = (targetPath, linkTarget) => {
+  const relTarget = relative(targetRoot, targetPath);
+
+  if (pathExists(targetPath)) {
+    if (!force) {
+      skipped.push(relTarget);
+
+      return;
+    }
+
+    backupExisting(targetPath);
+  }
+
+  if (!dryRun) {
+    ensureParent(targetPath);
+    symlinkSync(linkTarget, targetPath, "dir");
+  }
+
+  linked.push(`${relTarget} -> ${linkTarget}`);
 };
 
 const copyDirectoryWithPolicy = (sourceDir, targetDir) => {
@@ -75,8 +119,14 @@ const copyDirectoryWithPolicy = (sourceDir, targetDir) => {
 };
 
 for (const entry of entries) {
-  const sourcePath = join(repoRoot, entry.source);
   const targetPath = join(targetRoot, entry.target);
+
+  if (entry.type === "symlink") {
+    createSymlinkWithPolicy(targetPath, entry.linkTarget);
+    continue;
+  }
+
+  const sourcePath = join(repoRoot, entry.source);
 
   if (entry.type === "file") {
     copyFileWithPolicy(sourcePath, targetPath);
@@ -97,6 +147,11 @@ console.log(`${mode} agent kit to ${targetRoot}`);
 if (copied.length > 0) {
   console.log("\nCopied:");
   copied.forEach((item) => console.log(`- ${item}`));
+}
+
+if (linked.length > 0) {
+  console.log("\nLinked:");
+  linked.forEach((item) => console.log(`- ${item}`));
 }
 
 if (backedUp.length > 0) {
