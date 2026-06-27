@@ -1,0 +1,20 @@
+{
+  "name": "expo-mobile-agent-template",
+  "version": "0.1.0",
+  "private": false,
+  "type": "module",
+  "description": "Reusable agent instructions and skills for Expo mobile app projects.",
+  "scripts": {
+    "apply": "node scripts/apply-agent-kit.mjs",
+    "validate": "node scripts/validate-template.mjs"
+  },
+  "keywords": [
+    "expo",
+    "react-native",
+    "codex",
+    "agents",
+    "template"
+  ],
+  "license": "MIT"
+}
+

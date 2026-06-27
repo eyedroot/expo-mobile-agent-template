@@ -1,0 +1,62 @@
+# Expo Mobile Agent Template
+
+Reusable agent instructions and skills for Expo mobile app projects.
+
+This repository is intentionally not a full Expo app scaffold. Expo changes quickly, so new apps should start from the current official Expo starter, then apply this agent kit on top. That keeps Expo-owned files such as `package.json`, `app.json`, Metro config, and native project output aligned with the latest SDK instead of freezing them in this template.
+
+## Recommended Start
+
+Create the app from Expo first:
+
+```bash
+npx create-expo-app@latest my-app --template default@sdk-56
+cd my-app
+```
+
+Then apply this kit:
+
+```bash
+node ../expo-mobile-agent-template/scripts/apply-agent-kit.mjs .
+```
+
+If the target already has `AGENTS.md` or `.agents/skills/*`, the script skips those files by default. Review the skipped list, then rerun with `--force` only when replacing them is intended:
+
+```bash
+node ../expo-mobile-agent-template/scripts/apply-agent-kit.mjs . --force
+```
+
+`--force` creates timestamped `.bak-*` backups before overwriting.
+
+## What This Includes
+
+- `AGENTS.md`: generic Expo mobile development rules for agent-assisted work.
+- `.agents/skills/`: focused workflow skills for routing, Zustand, build fixes, docs hygiene, simulator control, Expo dependency updates, and related mobile patterns.
+- `scripts/apply-agent-kit.mjs`: safe copier for applying the kit to a fresh or existing Expo app.
+- `scripts/validate-template.mjs`: lightweight repository sanity check.
+
+## What This Avoids
+
+- No app source files are provided.
+- No Expo SDK versions are pinned here.
+- No project-specific Supabase, Sentry, AdMob, bundle identifier, environment variable, or deployment configuration is included.
+- No secrets or `.env` examples with real values are included.
+
+## Migration Policy
+
+This template is designed as an overlay, not a replacement for app files.
+
+1. Start or upgrade the Expo app using Expo's current tooling.
+2. Apply this kit to copy agent instructions and skills only.
+3. Add project-specific rules in a short section near the top of the copied `AGENTS.md`.
+4. When a project needs domain-specific workflows, copy one of the optional skills and replace placeholders with local paths, service names, and verification commands.
+
+## Maintenance
+
+Run the local sanity check before pushing changes:
+
+```bash
+npm run validate
+```
+
+When Expo releases a new SDK, update examples in this README and the runtime stack note in `AGENTS.md`. Do not add generated Expo project files just to track a new SDK.
+
