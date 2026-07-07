@@ -59,7 +59,7 @@ def resolve_path(base_dir: Path, value: str | None) -> Path | None:
         return None
 
     path = Path(value).expanduser()
-    return path if path.is_absolute() else base_dir / path
+    return (path if path.is_absolute() else base_dir / path).resolve()
 
 
 def load_font(path: str | None, size: int, index: int = 0) -> ImageFont.FreeTypeFont:
