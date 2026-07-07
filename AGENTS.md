@@ -136,7 +136,7 @@ Detailed patterns are split into `.agents/skills/*`.
 - `build-fix`: collect and fix TypeScript, lint, and Expo build errors.
 - `update-expo-deps`: update Expo-compatible dependencies safely.
 - `mobile-simulator-control`: inspect and control iOS Simulator or Android Emulator.
+- `app-store-preview-assets`: generate localized App Store or Play Store preview screenshots from simulator captures.
 - `auth-guard-check`: audit authentication guards for protected actions.
 - `ad-patterns`: optional AdMob integration checklist.
 - `docs-agent`: maintain AGENTS and skill instructions without overloading shared context.
-

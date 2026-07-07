@@ -1,0 +1,4 @@
+interface:
+  display_name: "App Store Preview Assets"
+  short_description: "Generate localized mobile store preview images."
+  default_prompt: "Use $app-store-preview-assets to generate localized App Store preview screenshots from simulator captures."
