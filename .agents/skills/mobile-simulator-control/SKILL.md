@@ -27,6 +27,12 @@ adb exec-out screencap -p > /tmp/app-screen.png
 adb shell input tap 100 100
 ```
 
+## Compiler configuration changes
+
+- After Babel/compiler changes, restart Metro with a cleared cache and fully relaunch the app. A compatible existing dev client can be reused when native dependencies/configuration did not change.
+- Validate both iOS and Android when compiler/Worklets ordering affects both platforms: target entry, primary interaction, state updates, layout, and relevant Metro/native errors. Follow [React Compiler 점검과 호환성](../performance-patterns/references/react-compiler.md) for emitted-code evidence.
+- If temporary test environment settings are needed, verify their actual effect in the app, restore the original settings, and relaunch in the ordinary configuration before reporting completion.
+
 ## Rules
 
 - Prefer semantic UI automation tools when available.

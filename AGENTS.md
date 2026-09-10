@@ -77,7 +77,8 @@ This guide is for Expo mobile app projects. Keep app-specific product rules, ser
 - Reusable components should use `const ComponentName: FC<Props> = (...) =>`.
 - Do not define large helper components inline inside route screen files. Move them to `src/components/`.
 - Hook order: native/router hooks, third-party hooks, project hooks, React state/memo/ref hooks, store hooks, effects.
-- Wrap array/object dependencies created in component bodies with `useMemo` before using them in dependency arrays.
+- Prefer creating Effect-only objects inside the Effect and declare their actual inputs as dependencies. Use manual memoization where measured cost or reference consumers justify it; do not make correctness depend on a cache.
+- Check actual React Compiler coverage before adding or removing memoization. Follow `performance-patterns` for compiler compatibility, Babel order, and output verification.
 - Use `useState(() => initialValue)` for synchronous one-time initialization when external changes do not need to be tracked.
 
 ## UI Rules
@@ -131,7 +132,7 @@ Detailed patterns are split into `.agents/skills/*`.
 
 - `zustand-patterns`: Zustand stores, persistence, initialization, service-layer boundaries.
 - `routing-patterns`: Expo Router routes, headers, modal navigation, route constants.
-- `performance-patterns`: FlashList, Reanimated, memoization, list performance.
+- `performance-patterns`: FlashList, Reanimated, React Compiler compatibility and verification, memoization, list performance.
 - `expo-ui-patterns`: `@expo/ui` native component file splitting and layout issues.
 - `build-fix`: collect and fix TypeScript, lint, and Expo build errors.
 - `update-expo-deps`: update Expo-compatible dependencies safely.

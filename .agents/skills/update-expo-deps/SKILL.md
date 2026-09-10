@@ -15,6 +15,11 @@ description: Expo SDK 호환 의존성 및 npm 최신 버전을 점검하고 안
 6. Use `npx expo install <packages>` for Expo-managed packages.
 7. Rerun `npx expo install --check`, type check, and lint when available.
 
+## Compiler and Babel checks
+
+- When Expo, Babel presets, NativeWind, Reanimated/Worklets, or compiler/lint plugins change, recheck automatic plugin registration and the expanded Babel order. Inspect resolved versions, including transitive dependencies, before adding packages.
+- If the project enables React Compiler, follow [React Compiler 점검과 호환성](../performance-patterns/references/react-compiler.md) to verify emitted app code and affected mobile platforms after the update.
+
 ## Guardrails
 
 - Expo compatibility wins over raw npm latest for Expo-managed native packages.

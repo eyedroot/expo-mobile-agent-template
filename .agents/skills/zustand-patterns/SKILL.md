@@ -20,6 +20,9 @@ description: Zustand 스토어 생성, 수정, persist, initialization, selector
 
 ## Selectors
 
+- React Compiler does not replace store subscriptions. Select reactive values or derived primitives instead of memoizing a stable getter that reads changing external state. Pass selected values explicitly to pure derivation helpers.
+- Shallow comparison checks only the returned top-level values; fresh nested objects or arrays can still invalidate the snapshot on every read. Compiler memoization does not repair an unstable selector result.
+
 - Prefer stable selectors. If project convention uses `useShallow`, follow it consistently.
 - Avoid returning fresh objects or arrays from selectors unless shallow comparison is used.
 
